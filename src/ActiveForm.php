@@ -3,7 +3,6 @@
 namespace iAvatar777\services\FormAjax;
 
 
-use common\services\Security;
 use yii\base\InvalidCallException;
 use yii\base\Model;
 use yii\base\Widget;
@@ -28,7 +27,7 @@ class ActiveForm extends \yii\bootstrap\ActiveForm
         if (isset($config['options']['id'])) {
             $formSelector = '#' . $config['options']['id'];
         } else {
-            $id = Security::generateRandomString(10, Security::ALGORITM_ALPHA);
+            $id = self::generateRandom(10);
             $formSelector = '#' . 'form' . $id;
             $config['options']['id'] = 'form' . $id;
         }
@@ -120,6 +119,15 @@ JS
 );
 
         return parent::begin($config);
+    }
+
+    private static function generateRandom($length)
+    {
+        $string = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+        $string = str_shuffle($string);
+        $string = substr($string, 0, $length);
+
+        return $string;
     }
 
     public static function end($config = [])
