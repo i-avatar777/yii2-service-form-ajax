@@ -1,3 +1,6 @@
+0.0.3
+Обновил версию
+
 0.0.2
 Прописал в `\iAvatar777\services\FormAjax\ActiveForm::begin` функцию `self::generateRandom`
  
