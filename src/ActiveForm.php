@@ -2,7 +2,6 @@
 
 namespace iAvatar777\services\FormAjax;
 
-
 use yii\base\InvalidCallException;
 use yii\base\Model;
 use yii\base\Widget;

@@ -25,7 +25,7 @@ class DefaultFormDelete extends BaseAction
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $class = $this->model;
-        /** @var \iAvatar777\services\FormAjax\ActiveRecord $model */
+        /** @var Model | ActiveRecord $model */
         $model = $class::findOne(Yii::$app->request->post('id'));
         $s = $model->delete();
 

@@ -25,7 +25,7 @@ class DefaultFormAdd extends BaseAction
     public function run()
     {
         $class = $this->model;
-        /** @var Model $model */
+        /** @var Model | ActiveRecord $model */
         $model = new $class();
 
         if (Yii::$app->request->isPost) {

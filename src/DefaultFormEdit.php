@@ -26,7 +26,7 @@ class DefaultFormEdit extends BaseAction
     public function run()
     {
         $class = $this->model;
-        /** @var \iAvatar777\services\FormAjax\ActiveRecord $model */
+        /** @var Model | ActiveRecord $model */
         $model = $class::findOne(Yii::$app->request->get('id'));
 
         if (Yii::$app->request->isPost) {

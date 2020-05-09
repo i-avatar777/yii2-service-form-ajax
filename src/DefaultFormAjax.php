@@ -24,7 +24,7 @@ class DefaultFormAjax extends BaseAction
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $class = $this->model;
-        /** @var \iAvatar777\services\FormAjax\Model $model */
+        /** @var Model | ActiveRecord $model */
         $model = new $class();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
