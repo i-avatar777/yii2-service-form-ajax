@@ -131,7 +131,7 @@ JS
 
     public static function end($config = [])
     {
-        echo Html::button($config['label'], ['class' => 'btn btn-success buttonAction', 'style' => 'width:100%']);
+        echo Html::button(ArrayHelper::getValue($config, 'label', 'Обновить'), ['class' => 'btn btn-success buttonAction', 'style' => 'width:100%']);
         parent::end();
     }
 
