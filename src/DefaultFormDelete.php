@@ -17,7 +17,6 @@ use yii\web\Response;
 class DefaultFormDelete extends BaseAction
 {
     public $model;
-    public $formName = '';
 
     public function run()
     {
