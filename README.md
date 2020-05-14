@@ -13,6 +13,57 @@
 
 \common\services\FormAjax\ActiveRecord::attributeWidgets - здесь указываются виджеты и их настроки для вывода в форме
 
+Так указывается форма на странице:
+```php
+<?php $model = new \avatar\models\validate\CabinetSchoolFilesCloudSave(); ?>
+<?php $form = \iAvatar777\services\FormAjax\ActiveForm::begin([
+    'model'   => $model,
+    'formUrl' => '/cabinet-school-files/add',
+    'success' => <<<JS
+function (ret) {
+    $('#modalInfo').on('hidden.bs.modal', function() {
+        
+    }).modal();
+}
+JS
+
+]) ?>
+    <?= $form->field($model, 'url') ?>
+    <?= $form->field($model, 'key')->passwordInput() ?>
+<?php \iAvatar777\services\FormAjax\ActiveForm::end(['label' => 'Сохранить']) ?>
+```
+
+Если вы используете эту `ActiveForm` то в виде модели для нее надо использовать эту модель `ActiveRecord` или эту `Model`. В них прописана функция возврата ошибки валидации `getErrors102`.
+Или вы можете использовать свои но скопировать эту функцию в свою модель.
+
+В виде обработчика формы главным считается `DefaultFormAjax` он прописывается в контроллере так:
+
+```php
+class CabinetBlogController extends CabinetBaseController
+{
+    public function actions()
+    {
+        return [
+            'add' => [
+                'class'    => '\iAvatar777\services\FormAjax\DefaultFormAjax',
+                'model'    => '\avatar\models\forms\BlogItem',
+            ],
+        ];
+    }
+}
+```
+
+Где `model` - это модель формы, а `add` - это идентификатор действия (`Action::id`).
+
+Чтобы форма отправляла проверку на этот обработчик, надо вформе прописать
+
+
+# Установка
+
+
+
+# Использование
+
 Код для сохранения:
 ```php
 if (Yii::$app->request->isPost) {

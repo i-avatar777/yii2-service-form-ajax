@@ -102,6 +102,51 @@ if ({$type} == 2) {
     });
 };
 $('{$formSelector} .buttonAction').click({$nameJS}.onClick);
+$('{$formSelector}').on('submit', function(ret) {
+    var b = $(this).find('.buttonAction');
+    b.off('click');
+    var title = b.html();
+    b.html($('<i>', {class: 'fa fa-spinner fa-spin fa-fw'}));
+    b.attr('disabled', 'disabled');
+    
+    ajaxJson({
+        url: {$nameJS}.url,
+        data: $('{$formSelector}').serializeArray(),
+        success: function(ret) {
+            b.on('click', {$nameJS}.onClick);
+            b.html(title);
+            b.removeAttr('disabled');
+            {$nameJS}.success1(ret);
+        },
+        errorScript: function(ret) {
+            b.on('click', {$nameJS}.onClick);
+            b.html(title);
+            b.removeAttr('disabled');
+            if (ret.id == 102) {
+                for (var key in ret.data.errors) {
+                    if (ret.data.errors.hasOwnProperty(key)) {
+                        var name = key;
+                        var value = ret.data.errors[key];
+                        var id;
+                        for (var key2 in ret.data.fields) {
+                            if (ret.data.fields.hasOwnProperty(key2)) {
+                                var name2 = key2;
+                                var value2 = ret.data.fields[key2];
+                                if (name == name2) {
+                                    id = 'field-' + value2;
+                                }
+                            }
+                        }
+                        var g = $('.' + id);
+                        g.addClass('has-error');
+                        g.find('p.help-block-error').html(value.join('<br>')).show();
+                    }
+                }
+            }
+        }
+    });
+    return false;
+});
 
 // снимает ошибочные признаки поля при фокусе
 $('{$formSelector} .form-control').on('focus', function() {
@@ -141,6 +186,22 @@ JS
      */
     public function field($model, $attribute, $options = [])
     {
-        return parent::field($model, $attribute, $options);
+        $f = parent::field($model, $attribute, $options);
+        if (method_exists($model, 'attributeWidgets')) {
+            $fields = $model->attributeWidgets();
+            if (isset($fields[$attribute])) {
+                $widget = $fields[$attribute];
+                if (is_array($widget)) {
+                    $params = $widget;
+                    $class = $widget['class'];
+                    unset($params['class']);
+                    $f->widget($class, $params);
+                } else {
+                    $f->widget($widget);
+                }
+            }
+        }
+
+        return $f;
     }
 }
