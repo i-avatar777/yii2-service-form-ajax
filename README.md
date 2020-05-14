@@ -61,6 +61,29 @@ class CabinetBlogController extends CabinetBaseController
 # Установка
 
 
+# Особенность
+
+Событие submit на Enter вызывается два раза, причем только первый раз. Выяснить почему так выяснить не удалось. В связи с этим для того чтобы обойти поставил обход через установку параметра `delta` = 1000 мс, в течение которого нельзя вызвать повторно событие `мой submit`.
+```js
+$('#formc2ff52cf').submit(function(ret) {
+    form1.isStart = true;
+    form1.thisStart = (new Date()).getTime();
+    
+    if (form1.lastStart == -1) {
+        form1.lastStart = form1.thisStart;
+    } else {
+        if (form1.lastStart + form1.delta > form1.thisStart) {
+            form1.isStart = false;
+        }
+    }
+    
+    if (form1.isStart) {
+        // AJAX
+    }
+
+    return false;
+});
+```
 
 # Использование
 
