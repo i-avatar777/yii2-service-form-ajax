@@ -1,7 +1,9 @@
 # FormAjax
 
 Сервис для yii2 для для валидации и исполнения формы по AJAX.
-Делает вместро submit с обновлением страницы - ajax запрос и вызов `success`.
+Делает вместро submit с обновлением страницы - ajax запрос и вызов JS метода `success`.
+
+
 
 ## Концепция
 
@@ -11,7 +13,7 @@
 
 Исключение составляет в том что нельзя по AJAX передать файл, или сложно, поэтому применяется виджет для онлайн загрузки где по AJAX передается только файл.
 
-\common\services\FormAjax\ActiveRecord::attributeWidgets - здесь указываются виджеты и их настроки для вывода в форме
+\iAvatar777\services\FormAjax\ActiveRecord::attributeWidgets - здесь указываются виджеты и их настроки для вывода в форме
 
 Так указывается форма на странице:
 ```php
@@ -57,9 +59,46 @@ class CabinetBlogController extends CabinetBaseController
 
 Чтобы форма отправляла проверку на этот обработчик, надо вформе прописать
 
+## Отличие от стандартной обработки по AJAX в YII2
+
+
+
+
 
 # Установка
 
+# Показывание WIDGET
+
+В функции `attributeWidgets` указывается соответствие поля и виджета. Этот виджет будет рисоваться автоматически если в форме указано:
+
+`<?= $form->field($model, 'image') ?>`
+
+```php
+class ProductImage extends \iAvatar777\services\FormAjax\ActiveRecord
+{
+    
+    public function attributeWidgets()
+    {
+        return [
+            'image' => [
+                'class'    => '\iAvatar777\widgets\FileUpload7\FileUpload',
+                'update'   => \avatar\controllers\CabinetSchoolPagesConstructorController::getUpdate(),
+                'settings' => \avatar\controllers\CabinetSchoolPagesConstructorController::getSettingsLibrary($this->_school_id, $this->_type_id),
+                'events'   => [
+                    'onDelete' => function ($item) {
+                        $r = new \cs\services\Url($item->image);
+                        $d = pathinfo($r->path);
+                        $start = $d['dirname'] . '/' . $d['filename'];
+
+                        File::deleteAll(['like', 'file', $start]);
+                    },
+                ],
+            ],
+        ];
+    }
+
+}
+```
 
 # Особенность
 
@@ -85,21 +124,20 @@ $('#formc2ff52cf').submit(function(ret) {
 });
 ```
 
-# Использование
+# Использование в контроллере при добавлении или обновлении
 
-Код для сохранения:
+Если модель класса `\yii\db\ActiveRecord` или `\yii\base\Model` то код для сохранения в контроллере такой:
+
 ```php
 if (Yii::$app->request->isPost) {
     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
         $s = $model->save();
-
         return self::jsonSuccess();
     } else {
         $fields = [];
         foreach ($model->attributes as $k => $v) {
             $fields[$k] = Html::getInputId($model, $k);
         }
-
         return self::jsonErrorId(102, [
             'errors' => $model->errors,
             'fields' => $fields,
@@ -108,7 +146,31 @@ if (Yii::$app->request->isPost) {
 }
 ```
 
+Если модель класса `\iAvatar777\services\FormAjax\ActiveRecord` или `\iAvatar777\services\FormAjax\Model` то в них существует функция `getErrors102()` и тогда код уменьшается и можно писать так:
+
+```php
+if (Yii::$app->request->isPost) {
+    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        $s = $model->save();
+        return self::jsonSuccess();
+    } else {
+        return self::jsonErrorId(102, $model->getErrors102());
+    }
+}
+```
+
 ## Пример использования
+
+
+
+## Стандартные действия
+
+Для упрощения стандартных действий в библиотеке есть стандартный набор обработчиков действий:
+
+- `\iAvatar777\services\FormAjax\DefaultFormAjax` - применяется для обработки AJAX обработки формы
+- `\iAvatar777\services\FormAjax\DefaultFormAdd` - применяется для рисования формы добавления на странице, на страницу передается переменная `$model`
+- `\iAvatar777\services\FormAjax\DefaultFormEdit` - применяется для рисования формы редактирования на странице, на страницу передается переменная `$model`. Идентификатор записи передается по методу GET в параметре `id`.
+- `\iAvatar777\services\FormAjax\DefaultFormDelete` - применяется для удаления записи по AJAX. Идентификатор записи передается по методу POST в параметре `id`.
 
 ## Использование если на странице форма добавления
 
@@ -132,9 +194,7 @@ class CabinetBlogController extends CabinetBaseController
 
 Параметр `view` не обязателен, если не указан то используется идентификатор действия (action).
 
-
-
-## Событийная модель для ActiveRecord
+## Событийная модель для `\iAvatar777\services\FormAjax\ActiveRecord`
 
 ```
 Widget:onBeforeLoad выполняется до   $model->load()
@@ -155,7 +215,35 @@ Widget:onBeforeDelete выполняется до   $model->delete()
 Widget:onAfterDelete выполняется после $model->delete()
 ```
 
-Всего два сценария показа формы
+Как они описываются и что туда епередается?
+
+`function onBeforeUpdate() {}`
+
+## Модель запуска событий
+ 
+Например `delete`
+
+1. attributeWidgets() `['events']['onBeforeDelete']`
+2. Widget:onBeforeDelete
+3. \yii\db\ActiveRecord::delete()
+4. Widget:onAfterDelete
+5. attributeWidgets() `['events']['onAfterDelete']`
+
+То есть можно написать свой обработчик если надо и вместе с этим в самом виджете использовать дополнительные обработки.
+
+Например это актуально если в форме выводятся значения в одном формате а хранятся в БД в другом формате тогда можно а обработчике виджета прописать приведение типа.
+
+Или например это актуально если нужно удалить картинку по факту удаления записи.
+
+Сейчас работает:
+
+1. Widget:onBeforeDelete
+2. \yii\db\ActiveRecord::delete()
+3. Widget:onAfterDelete
+
+## 1
+ 
+1. Всего два сценария показа формы
 
 ```
 1

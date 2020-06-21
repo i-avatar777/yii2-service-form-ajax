@@ -12,19 +12,17 @@ class ActiveRecord extends \yii\db\ActiveRecord
         return [
 //            'name' => '\common\widgets\PlaceMapYandex\PlaceMap',
 //            'point' => [
-//                '\iAvatar777\widgets\FileUpload7\FileUpload',
-//                [
-//                    'update'    => \avatar\controllers\CabinetSchoolPagesConstructorController::getUpdate(),
-//                    'settings'  => \avatar\controllers\CabinetSchoolPagesConstructorController::getSettingsLibrary(2, 21),
-//                    'events'    => [
-//                        'onDelete' => function ($item) {
-//                            $r = new \cs\services\Url($item->image);
-//                            $d = pathinfo($r->path);
-//                            $start = $d['dirname'] . '/' . $d['filename'];
+//                'class'     => '\iAvatar777\widgets\FileUpload7\FileUpload',
+//                'update'    => \avatar\controllers\CabinetSchoolPagesConstructorController::getUpdate(),
+//                'settings'  => \avatar\controllers\CabinetSchoolPagesConstructorController::getSettingsLibrary(2, 21),
+//                'events'    => [
+//                    'onDelete' => function ($item) {
+//                        $r = new \cs\services\Url($item->image);
+//                        $d = pathinfo($r->path);
+//                        $start = $d['dirname'] . '/' . $d['filename'];
 //
-//                            File::deleteAll(['like', 'file', $start]);
-//                        },
-//                    ],
+//                        File::deleteAll(['like', 'file', $start]);
+//                    },
 //                ],
 //            ],
         ];
@@ -131,45 +129,45 @@ class ActiveRecord extends \yii\db\ActiveRecord
 //
 //        return $return;
 //    }
-//
-//    /**
-//     * @param $methodName
-//     * @return array
-//     */
-//    private function executeMethod($methodName)
-//    {
-//        $fields = $this->formAttributes();
-//        $ret = [];
-//        foreach ($fields as $field) {
-//            if (isset($field['widget'])) {
-//                $widget = $field['widget'];
-//                $options = [];
-//                if (is_array($widget)) {
-//                    $class = $widget[0];
-//                    if (isset($widget[1])) {
-//                        $options = $widget[1];
-//                    }
-//                } else {
-//                    $class = $widget;
-//                }
-//                $fieldName = $field['name'];
-//                $options = ArrayHelper::merge($options, [
-//                    'model'     => $this,
-//                    'attribute' => $fieldName,
-//                    'value'     => $this->$fieldName,
-//                ]);
-//                $object = new $class($options);
-//                if (method_exists($object, $methodName)) {
-//                    $ret[] = $fieldName;
-//                    $object->$methodName($field);
-//                }
-//            } else {
-//                $ret[] = $field['name'];
-//            }
-//        }
-//
-//        return $ret;
-//    }
+
+    /**
+     * Вызывает метод в виджетах всей записи
+     *
+     * @param $methodName
+     * @return array
+     */
+    private function executeMethod($methodName)
+    {
+        $fields = $this->attributeWidgets();
+        $ret = [];
+        foreach ($fields as $k => $v) {
+            if (is_array($v)) {
+                $class = $v['class'];
+                $options = $v;
+                unset($options['class']);
+                $options = ArrayHelper::merge($options, [
+                    'model'     => $this,
+                    'attribute' => $k,
+                    'value'     => $this->$k,
+                ]);
+
+            } else {
+                $class = $v;
+                $options = [
+                    'model'     => $this,
+                    'attribute' => $k,
+                    'value'     => $this->$k,
+                ];
+            }
+            $object = new $class($options);
+            if (method_exists($object, $methodName)) {
+                $object->$methodName();
+            }
+            $ret[] = $k;
+        }
+
+        return $ret;
+    }
 //
 //    public function load($data, $formName = null)
 //    {
@@ -257,15 +255,15 @@ class ActiveRecord extends \yii\db\ActiveRecord
 //
 //        return true;
 //    }
-//
-//    public function delete()
-//    {
-//        $this->executeMethod('onBeforeDelete');
-//        parent::delete();
-//        $this->executeMethod('onAfterDelete');
-//
-//        return true;
-//    }
+
+    public function delete()
+    {
+        $this->executeMethod('onBeforeDelete');
+        parent::delete();
+        $this->executeMethod('onAfterDelete');
+
+        return true;
+    }
 
     public function getErrors102($attribute = null)
     {
