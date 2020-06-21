@@ -168,6 +168,29 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
         return $ret;
     }
+
+    /**
+     * Вызывает событие в виджетах всей записи
+     *
+     * @param string $eventName
+     * @return array
+     */
+    private function executeEvent($eventName)
+    {
+        $fields = $this->attributeWidgets();
+        $ret = [];
+        foreach ($fields as $k => $v) {
+            if (is_array($v)) {
+                if (isset($v['events'][$eventName])) {
+                    $eventFunction = $v['events'][$eventName];
+                    $eventFunction($this);
+                    $ret[] = $k;
+                }
+            }
+        }
+
+        return $ret;
+    }
 //
 //    public function load($data, $formName = null)
 //    {
@@ -258,9 +281,11 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
     public function delete()
     {
+        $this->executeEvent('onBeforeDelete');
         $this->executeMethod('onBeforeDelete');
         parent::delete();
         $this->executeMethod('onAfterDelete');
+        $this->executeEvent('onAfterDelete');
 
         return true;
     }

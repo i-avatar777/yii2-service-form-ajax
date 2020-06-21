@@ -1,3 +1,6 @@
+0.0.8
+Добавлен вызов событий `onBeforeDelete` и `onAfterDelete` в виджете.
+
 0.0.7
 Добавлен вызов функций `onBeforeDelete` и `onAfterDelete` в виджете.
 
