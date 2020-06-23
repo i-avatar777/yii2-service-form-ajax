@@ -100,6 +100,46 @@ class ProductImage extends \iAvatar777\services\FormAjax\ActiveRecord
 }
 ```
 
+# Отключить кнопку
+
+Если надо не показывать кнопку и внучную отработать то можно так:
+
+`<?php \iAvatar777\services\FormAjax\ActiveForm::end(['isHide' => true]) ?>`
+
+```js
+ajaxJson({
+    url: '/...',
+    data: $('{$formSelector}').serializeArray(),
+    success: function(ret) {
+        //
+    },
+    errorScript: function(ret) {
+        if (ret.id == 102) {
+            for (var key in ret.data.errors) {
+                if (ret.data.errors.hasOwnProperty(key)) {
+                    var name = key;
+                    var value = ret.data.errors[key];
+                    var id;
+                    for (var key2 in ret.data.fields) {
+                        if (ret.data.fields.hasOwnProperty(key2)) {
+                            var name2 = key2;
+                            var value2 = ret.data.fields[key2];
+                            if (name == name2) {
+                                id = 'field-' + value2;
+                            }
+                        }
+                    }
+                    var g = $('.' + id);
+                    g.addClass('has-error');
+                    g.find('p.help-block-error').html(value.join('<br>')).show();
+                }
+            }
+        }
+    }
+});
+
+```
+
 # Особенность
 
 Событие submit на Enter вызывается два раза, причем только первый раз. Выяснить почему так выяснить не удалось. В связи с этим для того чтобы обойти поставил обход через установку параметра `delta` = 1000 мс, в течение которого нельзя вызвать повторно событие `мой submit`.

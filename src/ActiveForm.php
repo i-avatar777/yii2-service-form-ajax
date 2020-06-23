@@ -195,7 +195,10 @@ JS
 
     public static function end($config = [])
     {
-        echo Html::button(ArrayHelper::getValue($config, 'label', 'Обновить'), ['class' => 'btn btn-success buttonAction', 'style' => 'width:100%']);
+        if (ArrayHelper::getValue($config, 'isHide', false) == false) {
+            echo Html::button(ArrayHelper::getValue($config, 'label', 'Обновить'), ['class' => 'btn btn-success buttonAction', 'style' => 'width:100%']);
+        }
+
         parent::end();
     }
 
