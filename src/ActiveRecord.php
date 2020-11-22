@@ -147,33 +147,27 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     private function executeMethod($methodName)
     {
-        $fields = $this->formAttributes();
+        $fields = $this->attributeWidgets();
         $ret = [];
-        foreach ($fields as $field) {
-            if (isset($field['widget'])) {
-                $widget = $field['widget'];
-                $options = [];
-                if (is_array($widget)) {
-                    $class = $widget[0];
-                    if (isset($widget[1])) {
-                        $options = $widget[1];
-                    }
-                } else {
-                    $class = $widget;
-                }
-                $fieldName = $field['name'];
-                $options = ArrayHelper::merge($options, [
-                    'model'     => $this,
-                    'attribute' => $fieldName,
-                    'value'     => $this->$fieldName,
-                ]);
-                $object = new $class($options);
-                if (method_exists($object, $methodName)) {
-                    $ret[] = $fieldName;
-                    $object->$methodName($field);
-                }
+        foreach ($fields as $attribute => $field) {
+            if (is_array($field)) {
+                $class = $field['class'];
+                unset($field['class']);
+                $options = $field;
             } else {
-                $ret[] = $field['name'];
+                $class = $field;
+                $options = [];
+            }
+
+            $options = ArrayHelper::merge($options, [
+                'model'     => $this,
+                'attribute' => $attribute,
+                'value'     => $this->$attribute,
+            ]);
+            $object = new $class($options);
+            if (method_exists($object, $methodName)) {
+                $ret[] = $attribute;
+                $object->$methodName($field);
             }
         }
 

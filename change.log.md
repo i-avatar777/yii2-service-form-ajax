@@ -1,3 +1,6 @@
+0.0.10
+Сделан вызов фугкций в виджетах `onBeforeInsert` `onBeforeUpdate` `onAfterLoadDb` `onBeforeLoad` `onAfterLoad` в классе `ActiveRecord` и `Model`
+
 0.0.9
 Добавлена возможность не показывать кнопку форму для ручной обработки формы
 
