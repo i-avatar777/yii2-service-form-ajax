@@ -254,7 +254,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
     public function save($runValidation = true, $attributeNames = null)
     {
-        if ($runValidation) if ($this->validate($attributeNames)) return false;
+        if ($runValidation) if (!$this->validate($attributeNames)) return false;
 
         if ($this->isNewRecord) {
             $fields = $this->executeMethod('onBeforeInsert');
