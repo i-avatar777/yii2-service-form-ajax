@@ -27,7 +27,7 @@ var iAvatar777_ActiveForm = {
     /**
      *
      * */
-    init: function (nameJS, formId, formSelector, formUrl, functionSuccess, type) {
+    init: function (formId, formSelector, formUrl, functionSuccess, type) {
         var data = {
             onClick: null,
             url: '',
@@ -88,6 +88,8 @@ var iAvatar777_ActiveForm = {
                 }
             });
         };
+
+        console.log([formSelector + ' .buttonAction', $(formSelector + ' .buttonAction'), data]);
         $(formSelector + ' .buttonAction').click(data.onClick);
 
         $(formSelector).submit(function(ret) {
@@ -162,7 +164,7 @@ var iAvatar777_ActiveForm = {
         });
 
         iAvatar777_ActiveForm.formArray.push({
-            id: nameJS,
+            id: formId,
             data: data
         });
     }

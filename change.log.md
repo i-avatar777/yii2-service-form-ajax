@@ -1,3 +1,6 @@
+0.0.13
+Отлажена JS фунция iAvatar777_ActiveForm.init() 
+
 0.0.12
 Добавлена JS фунция iAvatar777_ActiveForm.init() для инициализации формы 
 

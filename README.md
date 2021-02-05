@@ -337,5 +337,5 @@ public function onAfterLoadDb($field)
 
 Иногда возникает необходимость обработать, навесить обработчики формы после выдачи простого HTML. Тогда чтобы форма работала, нужно вызвать функцию
 ```JS
-iAvatar777_ActiveForm.init(formId);
+iAvatar777_ActiveForm.init(formId, formSelector, formUrl, functionSuccess, type);
 ```
