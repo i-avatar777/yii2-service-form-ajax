@@ -262,7 +262,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
             $fields = $this->executeMethod('onBeforeUpdate');
         }
 
-        parent::save(false, $fields);
+        parent::save(false);
 
         if ($this->isNewRecord) {
             $fields = $this->executeMethod('onAfterInsert');
