@@ -1,6 +1,6 @@
 {
   "name": "i-avatar777/yii2-service-form-ajax",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Сервис для yii2 для для валидации и исполнения формы по AJAX",
   "keywords": ["yii2-service-form-ajax"],
   "type": "project",

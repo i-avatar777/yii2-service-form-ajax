@@ -14,7 +14,7 @@ var iAvatar777_ActiveForm = {
      * */
     get: function (id) {
         var i = 0;
-        for(i = 0; i<iAvatar777_ActiveForm.formArray.length; i++) {
+        for(i = 0; i < iAvatar777_ActiveForm.formArray.length; i++) {
             if (iAvatar777_ActiveForm.formArray[i].id == id) {
                 return iAvatar777_ActiveForm.formArray[i].data;
             }

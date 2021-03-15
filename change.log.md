@@ -1,3 +1,6 @@
+0.0.14
+Исправлено сохранение в ActiveRecord.php
+
 0.0.13
 Отлажена JS фунция iAvatar777_ActiveForm.init() 
 
