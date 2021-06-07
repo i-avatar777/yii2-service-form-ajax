@@ -211,17 +211,10 @@ class Model extends \yii\base\Model
     {
         if ($runValidation) if (!$this->validate($attributeNames)) return false;
 
-        if ($this->isNewRecord) {
-            $fields = $this->executeMethod('onBeforeInsert');
-        } else {
-            $fields = $this->executeMethod('onBeforeUpdate');
-        }
+        $fields = $this->executeMethod('onBeforeUpdate');
 
-        if ($this->isNewRecord) {
-            $fields = $this->executeMethod('onAfterInsert');
-        } else {
-            $fields = $this->executeMethod('onAfterUpdate');
-        }
+        $fields = $this->executeMethod('onAfterUpdate');
+
 
         return true;
     }

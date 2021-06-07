@@ -172,7 +172,7 @@ $('#formc2ff52cf').submit(function(ret) {
 if (Yii::$app->request->isPost) {
     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
         $s = $model->save();
-        return self::jsonSuccess();
+        return self::jsonSuccess($s);
     } else {
         $fields = [];
         foreach ($model->attributes as $k => $v) {
@@ -192,7 +192,7 @@ if (Yii::$app->request->isPost) {
 if (Yii::$app->request->isPost) {
     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
         $s = $model->save();
-        return self::jsonSuccess();
+        return self::jsonSuccess($s);
     } else {
         return self::jsonErrorId(102, $model->getErrors102());
     }
@@ -201,6 +201,7 @@ if (Yii::$app->request->isPost) {
 
 ## Пример использования
 
+Если  сохранение вызывается в Model то parent:: будет вызывать onBeforeUpdate и onAfterUpdate
 
 
 ## Стандартные действия
