@@ -256,7 +256,9 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         if ($runValidation) if (!$this->validate($attributeNames)) return false;
 
-        if ($this->isNewRecord) {
+        $isNewRecord = $this->isNewRecord;
+
+        if ($isNewRecord) {
             $fields = $this->executeMethod('onBeforeInsert');
         } else {
             $fields = $this->executeMethod('onBeforeUpdate');
@@ -264,7 +266,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
         parent::save(false);
 
-        if ($this->isNewRecord) {
+        if ($isNewRecord) {
             $fields = $this->executeMethod('onAfterInsert');
         } else {
             $fields = $this->executeMethod('onAfterUpdate');
