@@ -2,6 +2,7 @@
 
 namespace iAvatar777\services\FormAjax;
 
+use cs\services\VarDumper;
 use yii\base\InvalidCallException;
 use yii\base\Model;
 use yii\base\Widget;
@@ -9,6 +10,7 @@ use yii\bootstrap\ActiveField;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\web\JsExpression;
 
 class ActiveForm extends \yii\bootstrap\ActiveForm
 {
@@ -23,6 +25,8 @@ class ActiveForm extends \yii\bootstrap\ActiveForm
 
     public static function begin($config = [])
     {
+        Asset::register(Yii::$app->view);
+
         if (isset($config['options']['id'])) {
             $formSelector = '#' . $config['options']['id'];
         } else {
@@ -43,6 +47,37 @@ class ActiveForm extends \yii\bootstrap\ActiveForm
         /** @var Model $model */
         $model = $config['model'];
         $formName = $model->formName();
+        $attributes1 = $model->attributes;
+        $attributes = array_keys($attributes1);
+        $attributeWidgets = $model->attributeWidgets();
+        $rows = [];
+        foreach($attributes as $a) {
+            if (array_key_exists($a, $attributeWidgets)) {
+                $v = $attributeWidgets[$a];
+                if (is_array($v)) {
+                    $class = $v['class'];
+                    unset($v['class']);
+                    $params = $v;
+                } else {
+                    $class = $v;
+                    $params = [];
+                }
+                $params['model'] = $model;
+                $params['attribute'] = $a;
+                $params['class'] = $class;
+
+                $o = Yii::createObject($params);
+                if (method_exists($o, 'get_field_value')) {
+                    $rows[] = ['name' => Html::getInputName($model, $a), 'id' => Html::getInputId($model, $a), 'type' => 'function', 'function' => new JsExpression($o->get_field_value())];
+                } else {
+                    $rows[] = ['name' => Html::getInputName($model, $a),'id' => Html::getInputId($model, $a),  'type' => 'standart'];
+                }
+            } else {
+                $rows[] = ['name' => Html::getInputName($model, $a),'id' => Html::getInputId($model, $a),  'type' => 'standart'];
+            }
+        }
+
+        $jsattributes = \yii\helpers\Json::encode($rows);
 
         Yii::$app->view->registerJs(<<<JS
 var {$nameJS} = {
@@ -52,6 +87,7 @@ var {$nameJS} = {
     thisStart: null,
     delta: 1000,
     isStart: null,
+    attributes: {$jsattributes},
     success1: {$success}
 };
 if ({$type} == 1) {
@@ -70,7 +106,7 @@ if ({$type} == 2) {
     
     ajaxJson({
         url: {$nameJS}.url,
-        data: $('{$formSelector}').serializeArray(),
+        data: iAvatar777_ActiveForm.getFields('{$formSelector}', {$nameJS}.attributes),
         success: function(ret) {
             b.on('click', {$nameJS}.onClick);
             b.html(title);

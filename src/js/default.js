@@ -167,5 +167,26 @@ var iAvatar777_ActiveForm = {
             id: formId,
             data: data
         });
+    },
+
+    getFields: function (formSelector, fields) {
+        var rows = [];
+        for(var i=0; i < fields.length; i++) {
+            var item = fields[i];
+            var value;
+
+            if (item.type == 'function') {
+                value = item.function();
+            } else {
+                value = $('#' + item.id).val();
+            }
+            rows.push({
+                name: item.name,
+                value: value
+            });
+        }
+
+
+        return rows;
     }
 };
