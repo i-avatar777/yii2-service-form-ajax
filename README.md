@@ -349,12 +349,6 @@ iAvatar777_ActiveForm.init(formId, formSelector, formUrl, functionSuccess, type)
 ```php
 class Widget extends \yii\base\Widget
 {
-    // false - при добавлении(ActiveRecord::insert) записи вызывается Update после получения ID, и оба события
-    // true - при добавлении(ActiveRecord::insert) записи вызывается Insert и оба события
-    // по умолчанию true
-    public $isInsert = true;
-
-    
     public function get_field_value()
     {
         $id = 'field-' . Html::getInputId($this->model, $this->attribute);
