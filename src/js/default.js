@@ -190,10 +190,11 @@ var iAvatar777_ActiveForm = {
         return rows;
     },
 
-    getField(serializeArray, name) {
+    getField(formSelector, name) {
         var value;
+        var serializeArray = $(formSelector).serializeArray();
         for(var i=0; i < serializeArray.length; i++) {
-            var item = serializeArray[i];
+            var item = fields[i];
 
             if (item.name == name) {
                 value = item.value;
