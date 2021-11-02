@@ -194,7 +194,7 @@ var iAvatar777_ActiveForm = {
         var value;
         var serializeArray = $(formSelector).serializeArray();
         for(var i=0; i < serializeArray.length; i++) {
-            var item = fields[i];
+            var item = serializeArray[i];
 
             if (item.name == name) {
                 value = item.value;
