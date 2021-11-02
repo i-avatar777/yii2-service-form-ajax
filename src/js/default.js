@@ -178,7 +178,7 @@ var iAvatar777_ActiveForm = {
             if (item.type == 'function') {
                 value = item.function();
             } else {
-                value = $('#' + item.id).val();
+                value = $('[name="'+item.name+'"]').val();
             }
             rows.push({
                 name: item.name,
