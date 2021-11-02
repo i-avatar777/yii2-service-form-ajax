@@ -178,7 +178,7 @@ var iAvatar777_ActiveForm = {
             if (item.type == 'function') {
                 value = item.function();
             } else {
-                value = $('[name="'+item.name+'"]').val();
+                value = iAvatar777_ActiveForm.getField(formSelector, item.name);
             }
             rows.push({
                 name: item.name,
@@ -188,5 +188,18 @@ var iAvatar777_ActiveForm = {
 
 
         return rows;
+    },
+
+    getField(serializeArray, name) {
+        var value;
+        for(var i=0; i < serializeArray.length; i++) {
+            var item = serializeArray[i];
+
+            if (item.name == name) {
+                value = item.value;
+            }
+        }
+
+        return value;
     }
 };
