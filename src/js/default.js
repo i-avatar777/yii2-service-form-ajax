@@ -180,10 +180,12 @@ var iAvatar777_ActiveForm = {
             } else {
                 value = iAvatar777_ActiveForm.getField(formSelector, item.name);
             }
-            rows.push({
-                name: item.name,
-                value: value
-            });
+            if (value !== null) {
+                rows.push({
+                    name: item.name,
+                    value: value
+                });
+            }
         }
 
 
@@ -191,9 +193,9 @@ var iAvatar777_ActiveForm = {
     },
 
     getField(formSelector, name) {
-        var value;
+        var value = null;
         var serializeArray = $(formSelector).serializeArray();
-        for(var i=0; i < serializeArray.length; i++) {
+        for (var i=0; i < serializeArray.length; i++) {
             var item = serializeArray[i];
 
             if (item.name == name) {
