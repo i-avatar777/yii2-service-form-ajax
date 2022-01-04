@@ -188,6 +188,12 @@ var iAvatar777_ActiveForm = {
             }
         }
 
+        if (iAvatar777_ActiveForm.getField(formSelector, '_csrf')) {
+            rows.push({
+                name: '_csrf',
+                value: value
+            });
+        }
 
         return rows;
     },
