@@ -352,10 +352,26 @@ class Widget extends \yii\base\Widget
     public function get_field_value()
     {
         $id = 'field-' . Html::getInputId($this->model, $this->attribute);
+        $name = Html::getInputName($this->model, $this->attribute);
         
         return <<<JS
-function () {
-    return $($('.' + '{$id}' + ' iframe')[0].contentDocument).find('body').html(); 
+function (fields) {
+    
+    // очищенный результат
+    var rows;
+    var serializeArray = $(formSelector).serializeArray();
+    // функция зачистки, учитывая что значений может быть много то алгоритм такой, прохожусь по всему массиву, если втретилось это поле то не вклчаю его в результат, остальное включаю.
+    for (var i=0; i < serializeArray.length; i++) {
+        if (serializeArray[i].name == '{name}') {
+            // делаю замену
+            rows.push({name: 'name', value: '1'});
+        } else {
+            // добавляю
+            rows.push(serializeArray[i]);
+        }
+    }
+    
+    return rows; 
 }
 JS;
     }
@@ -364,3 +380,39 @@ JS;
 
 Если функции в виджете нет то значени поля будет выбираться по ID поля `INPUT`.
 Собираются только те поля которые перечислены полями (`INPUT`) в форме.
+
+Пример скрипта очистки значений из serrializeArray:
+
+```js
+// очищенный результат
+var rows;
+var serializeArray = $(formSelector).serializeArray();
+// функция зачистки, учитывая что значений может быть много то алгоритм такой, прохожусь по всему массиву, если втретилось это поле то не вклчаю его в результат, остальное включаю.
+for (var i=0; i < serializeArray.length; i++) {
+    if (serializeArray[i].name == '{name}') {
+        // ничего не делаю
+    } else {
+        // добавляю
+        rows.push(serializeArray[i]);
+    }
+}
+```
+
+Пример скрипта для замены простого поля:
+
+```js
+// очищенный результат
+var rows;
+var serializeArray = $(formSelector).serializeArray();
+// функция зачистки, учитывая что значений может быть много то алгоритм такой, прохожусь по всему массиву, если втретилось это поле то не вклчаю его в результат, остальное включаю.
+for (var i=0; i < serializeArray.length; i++) {
+    if (serializeArray[i].name == '{name}') {
+        // делаю замену
+        rows.push({name: 'name', value: '1'});
+    } else {
+        // добавляю
+        rows.push(serializeArray[i]);
+    }
+}
+```
+

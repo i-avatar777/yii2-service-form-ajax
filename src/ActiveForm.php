@@ -46,34 +46,24 @@ class ActiveForm extends \yii\bootstrap\ActiveForm
         }
         /** @var Model $model */
         $model = $config['model'];
-        $formName = $model->formName();
-        $attributes1 = $model->attributes;
-        $attributes = array_keys($attributes1);
         $attributeWidgets = $model->attributeWidgets();
         $rows = [];
-        foreach($attributes as $a) {
-            if (array_key_exists($a, $attributeWidgets)) {
-                $v = $attributeWidgets[$a];
-                if (is_array($v)) {
-                    $class = $v['class'];
-                    unset($v['class']);
-                    $params = $v;
-                } else {
-                    $class = $v;
-                    $params = [];
-                }
-                $params['model'] = $model;
-                $params['attribute'] = $a;
-                $params['class'] = $class;
-
-                $o = Yii::createObject($params);
-                if (method_exists($o, 'get_field_value')) {
-                    $rows[] = ['name' => Html::getInputName($model, $a), 'id' => Html::getInputId($model, $a), 'type' => 'function', 'function' => new JsExpression($o->get_field_value())];
-                } else {
-                    $rows[] = ['name' => Html::getInputName($model, $a),'id' => Html::getInputId($model, $a),  'type' => 'standart'];
-                }
+        foreach($attributeWidgets as $key => $value) {
+            if (is_array($value)) {
+                $class = $value['class'];
+                unset($value['class']);
+                $params = $value;
             } else {
-                $rows[] = ['name' => Html::getInputName($model, $a),'id' => Html::getInputId($model, $a),  'type' => 'standart'];
+                $class = $value;
+                $params = [];
+            }
+            $params['model'] = $model;
+            $params['attribute'] = $key;
+            $params['class'] = $class;
+
+            $o = Yii::createObject($params);
+            if (method_exists($o, 'get_field_value')) {
+                $rows[] = ['name' => Html::getInputName($model, $key), 'id' => Html::getInputId($model, $key), 'type' => 'function', 'function' => new JsExpression($o->get_field_value())];
             }
         }
 

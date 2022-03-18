@@ -169,46 +169,21 @@ var iAvatar777_ActiveForm = {
         });
     },
 
+    /**
+     * @param formSelector
+     * @param fields array `.attributes`
+     * @returns {Array}
+     */
     getFields: function (formSelector, fields) {
         var rows = [];
+        var serializeArray = $(formSelector).serializeArray();
+
         for(var i=0; i < fields.length; i++) {
             var item = fields[i];
-            var value;
 
-            if (item.type == 'function') {
-                value = item.function();
-            } else {
-                value = iAvatar777_ActiveForm.getField(formSelector, item.name);
-            }
-            if (value !== null) {
-                rows.push({
-                    name: item.name,
-                    value: value
-                });
-            }
+            serializeArray = item.function(serializeArray);
         }
 
-        if (iAvatar777_ActiveForm.getField(formSelector, '_csrf')) {
-            rows.push({
-                name: '_csrf',
-                value: value
-            });
-        }
-
-        return rows;
-    },
-
-    getField(formSelector, name) {
-        var value = null;
-        var serializeArray = $(formSelector).serializeArray();
-        for (var i=0; i < serializeArray.length; i++) {
-            var item = serializeArray[i];
-
-            if (item.name == name) {
-                value = item.value;
-            }
-        }
-
-        return value;
+        return serializeArray;
     }
 };
