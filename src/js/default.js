@@ -180,8 +180,9 @@ var iAvatar777_ActiveForm = {
 
         for(var i=0; i < fields.length; i++) {
             var item = fields[i];
-
-            serializeArray = item.function(serializeArray);
+            if (item.type == 'function') {
+                serializeArray = item.function(formSelector, serializeArray);
+            }
         }
 
         return serializeArray;

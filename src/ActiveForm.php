@@ -63,7 +63,11 @@ class ActiveForm extends \yii\bootstrap\ActiveForm
 
             $o = Yii::createObject($params);
             if (method_exists($o, 'get_field_value')) {
-                $rows[] = ['name' => Html::getInputName($model, $key), 'id' => Html::getInputId($model, $key), 'type' => 'function', 'function' => new JsExpression($o->get_field_value())];
+                $rows[] = [
+                    'name'      => Html::getInputName($model, $key),
+                    'id'        => Html::getInputId($model, $key),
+                    'type'      => 'function',
+                    'function'  => new JsExpression($o->get_field_value())];
             }
         }
 
@@ -154,7 +158,7 @@ $('{$formSelector}').submit(function(ret) {
    
         ajaxJson({
             url: {$nameJS}.url,
-            data: $('{$formSelector}').serializeArray(),
+            data: iAvatar777_ActiveForm.getFields('{$formSelector}', {$nameJS}.attributes),
             success: function(ret) {
                 b.on('click', {$nameJS}.onClick);
                 b.html(title);
